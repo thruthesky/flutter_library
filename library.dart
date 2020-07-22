@@ -329,6 +329,13 @@ List<T> map<T>(List list, Function handler) {
 }
 
 /// 특정 시간에 한번 만 실행하는 함수
+/// 예를 들어
+///   - 1분에 한 번 만 실행하려는 경우,
+///   - 12시 정각에 한 번 실행 하려고 하는데, 11시 59분 59초에 실행하려고 했다면,
+///   - 12시 정각에 실행되지 않고, 12시 0분 59초에 실행되는 것으로 바뀐다.
+///   - 또 12시 0분 59초가 되기 전인, 12시 0분 30초에 실행 하려고 했다면,
+///   - 12시 1분 30초로 실행 시간이 바뀐다.
+///   - 즉, 특정 시간까지 실행을 기다리는데, 그 전에 실행하려고 한다면, 실행하려는 시간을 늦춘다.
 /// 참고: https://docs.google.com/document/d/148Vk8NX_RoyNKFrQZFR0lZsBzRARUljWH4kZMb4FI7M/edit#heading=h.cjnqi31f6urg
 class Debouncer {
   final Duration delay;
@@ -342,4 +349,10 @@ class Debouncer {
       action(seed);
     });
   }
+}
+
+/// 단어에서 첫 문자만 대문자로 변경한다.
+/// 예) word -> Word
+String fcUpperCase(String str) {
+  return (str ?? '').length < 1 ? '' : str[0].toUpperCase() + str.substring(1);
 }
