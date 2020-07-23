@@ -1,3 +1,8 @@
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+
 import 'dart:async';
 import 'dart:math';
 
@@ -355,4 +360,22 @@ class Debouncer {
 /// 예) word -> Word
 String fcUpperCase(String str) {
   return (str ?? '').length < 1 ? '' : str[0].toUpperCase() + str.substring(1);
+}
+
+/// 특정 local 임시 폴더에 있는 모든 파일을 읽어 들인다.
+Future<List<String>> loadFiles(String folderName) async {
+  List<String> files = [];
+  var directory = await getTemporaryDirectory();
+  var dir = Directory(p.join(directory.path, folderName));
+  try {
+    var dirList = dir.list();
+    await for (FileSystemEntity f in dirList) {
+      if (f is File) {
+        files.add(f.path);
+      } else if (f is Directory) {}
+    }
+  } catch (e) {
+    // print(e.toString());
+  }
+  return files;
 }
