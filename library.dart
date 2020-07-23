@@ -9,6 +9,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:flutter/services.dart' show rootBundle;
+
 /// Returns true if [obj] is one of null, false, empty string, or 0.
 bool isEmpty(obj) {
   return obj == null ||
@@ -378,4 +380,15 @@ Future<List<String>> loadFiles(String folderName) async {
     // print(e.toString());
   }
   return files;
+}
+
+/// 앱의 /assets 폴더에서 파일을 로드한다.
+/// @example
+/// ``` dart
+/// loadAsset('MARKDOWN/expression/expression.md').then((content) {
+///   setState(() => data = content);
+/// }
+/// ```
+Future<String> loadAsset(String path) async {
+  return await rootBundle.loadString(path);
 }
