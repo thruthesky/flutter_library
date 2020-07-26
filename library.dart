@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:convert';
+import 'dart:io' as io;
 
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
@@ -249,7 +250,7 @@ String numberFormat(String str) {
       new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => "${m[1]},");
 }
 
-/// 문자열에 있는 HTML 태그를 모두 없앤다.
+/// 문자열에 ���는 HTML 태그를 모두 없앤다.
 String stripTags(String htmlText) {
   RegExp exp = RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
   return htmlText.replaceAll(exp, '');
@@ -368,13 +369,13 @@ String fcUpperCase(String str) {
 Future<List<String>> loadFiles(String folderName) async {
   List<String> files = [];
   var directory = await getTemporaryDirectory();
-  var dir = Directory(p.join(directory.path, folderName));
+  var dir = io.Directory(p.join(directory.path, folderName));
   try {
     var dirList = dir.list();
-    await for (FileSystemEntity f in dirList) {
-      if (f is File) {
+    await for (io.FileSystemEntity f in dirList) {
+      if (f is io.File) {
         files.add(f.path);
-      } else if (f is Directory) {}
+      } else if (f is io.Directory) {}
     }
   } catch (e) {
     // print(e.toString());
@@ -391,4 +392,67 @@ Future<List<String>> loadFiles(String folderName) async {
 /// ```
 Future<String> loadAsset(String path) async {
   return await rootBundle.loadString(path);
+}
+
+/// 파일 경로로 부터, 파일 명(확장자 제외)을 리턴한다.
+/// 예) /root/users/.../abc.jpg 로 부터 abc 를 리턴한다.
+String filenameFromPath(String path) {
+  return path.split('/').last.split('.').first;
+}
+
+/// 핸드폰의 temporary 폴더에서 그 하위 경로로 파일 전체 경로를 리턴한다.
+/// [path] must include the file extension.
+/// @example
+/// ``` dart
+/// localFilePath('photo/baby.jpg');
+/// ```
+Future<String> localFilePath(String path) async {
+  var directory = await getTemporaryDirectory();
+  return p.join(directory.path, path);
+}
+
+/// 핸드폰의 temporary 폴더에서 그 하위 경로의 파일이 존재하는지 확인을한다.
+/// [path] must include the file extension.
+/// @example
+/// ``` dart
+/// localfileExists('photo/baby.jpg');
+/// ```
+Future<bool> localfileExist(String path) async {
+  var filePath = await localFilePath(path);
+  // print(filePath);
+  if (await io.File(filePath).exists()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/// JSON 파일을 읽어, JSON 으로 변환 후 리턴한다.
+Future readFileAsJson(String path) async {
+  if (await localfileExist(path)) {
+    String text = await io.File(await localFilePath(path)).readAsString();
+    return json.decode(text);
+  } else {
+    print('$path does not exists');
+    return null;
+  }
+}
+
+/// 파일의 내용을 읽어 문자열로 리턴한다.
+Future readFileAsString(String path) async {
+  if (await localfileExist(path)) {
+    return await io.File(await localFilePath(path)).readAsString();
+  } else {
+    print('$path does not exists');
+    return null;
+  }
+}
+
+/// 정수를 받아들여 10 보다 작으면, 앞에 0을 붙이고,
+/// 문자열로 변환해서 리턴한다.
+String add0(int n) {
+  if (n < 10)
+    return '0$n';
+  else
+    return '$n';
 }
