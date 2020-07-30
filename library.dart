@@ -431,6 +431,8 @@ Future<bool> localfileExist(String path) async {
 Future readFileAsJson(String path) async {
   if (await localfileExist(path)) {
     String text = await io.File(await localFilePath(path)).readAsString();
+    // print('text:');
+    // print(text);
     return json.decode(text);
   } else {
     print('$path does not exists');
