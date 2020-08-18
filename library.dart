@@ -427,7 +427,9 @@ Future<bool> localfileExist(String path) async {
   }
 }
 
-/// JSON 파일을 읽어, JSON 으로 변환 후 리턴한다.
+/// Returns json from json file. JSON 파일을 읽어, JSON 으로 변환 후 리턴한다.
+///
+/// This will return `null` when there is no file or error.
 Future readFileAsJson(String path) async {
   if (await localfileExist(path)) {
     String text = await io.File(await localFilePath(path)).readAsString();
