@@ -91,9 +91,14 @@ dynamic routerArguments(context) {
 }
 
 /// 하나의 배열(List)를 여러개의 작은 배열로 나누는 함수
+///
 /// ```dart
 /// List<dynamic> chunks = chunk(files, batch);
 /// for (List<String> c in chunks) print(c);
+/// ```
+///
+/// ```dart
+/// chunk([], 1);
 /// ```
 List<T> chunk<T>(List list, int chunkSize) {
   List<dynamic> chunks = [];
